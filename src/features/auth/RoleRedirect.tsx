@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useProfile } from './useProfile'
-import { LoadingScreen } from './LoadingScreen'
+import { LoadingScreen } from '@/components/LoadingScreen'
 
 /** Landing hub for "/" — sends a signed-in user to their role's home, or to /login. */
 export function RoleRedirect() {

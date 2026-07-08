@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useProfile } from './useProfile'
-import { LoadingScreen } from './LoadingScreen'
+import { LoadingScreen } from '@/components/LoadingScreen'
 import type { UserRole } from './types'
 
 interface RequireRoleProps {

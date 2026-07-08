@@ -27,7 +27,7 @@ profiles table. Include "Remember me" and a "Change Password" screen for CEMs.
 ### Prompt 3 — CEM check-in shell
 ```
 Read CLAUDE.md build order step 3 and PRD section 5 + 11 (CEM App screens 2-4).
-Build Building Selector, Location Selector (Warehouse/Floor/All Floors), and
+Build Building Selector, Location Selector (Warehouse/Floor/All  Floors), and
 Today's Check-In checklist as READ-ONLY for now (no action buttons wired yet).
 Pull real data from inventory_stock and products via Supabase.
 ```
