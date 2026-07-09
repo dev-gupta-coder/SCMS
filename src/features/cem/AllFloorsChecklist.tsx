@@ -13,7 +13,9 @@ export function AllFloorsChecklist({ rows }: { rows: StockRowWithFloor[] }) {
     })
 
   if (floorsInOrder.length === 0) {
-    return <p className="text-center text-sm text-gray-400">No stock recorded yet in this building.</p>
+    return (
+      <p className="text-center text-sm text-gray-400 dark:text-gray-500">No stock recorded yet in this building.</p>
+    )
   }
 
   return (
@@ -24,7 +26,7 @@ export function AllFloorsChecklist({ rows }: { rows: StockRowWithFloor[] }) {
 
         return (
           <div key={floor.id} className="flex flex-col gap-4">
-            <h2 className="text-base font-semibold text-gray-900">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
               {floor.floor_type === 'warehouse' ? 'Warehouse' : floor.name}
             </h2>
             {groups.map((group) => (

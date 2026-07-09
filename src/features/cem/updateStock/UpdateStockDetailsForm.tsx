@@ -22,8 +22,8 @@ export function UpdateStockDetailsForm({ row, submitting, onSubmit }: UpdateStoc
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="text-lg font-semibold text-gray-900">{row.product.name}</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{row.product.name}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Currently {row.current_stock} {row.product.unit} here
         </p>
       </div>
@@ -37,16 +37,16 @@ export function UpdateStockDetailsForm({ row, submitting, onSubmit }: UpdateStoc
       />
 
       {newStock !== null && (
-        <div className="rounded-xl bg-gray-50 px-4 py-3 text-center">
-          <span className="text-sm text-gray-500">New stock</span>
-          <p className="text-2xl font-semibold text-gray-900">
+        <div className="rounded-xl bg-gray-50 px-4 py-3 text-center dark:bg-gray-800">
+          <span className="text-sm text-gray-500 dark:text-gray-400">New stock</span>
+          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
             {newStock} {row.product.unit}
           </p>
         </div>
       )}
 
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-gray-600">Reason</span>
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Reason</span>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {CONSUMPTION_REASONS.map((option) => (
             <Button

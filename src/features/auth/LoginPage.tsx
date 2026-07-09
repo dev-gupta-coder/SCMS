@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { Button, toast } from '@/components/ui'
+import { Button, Input, toast } from '@/components/ui'
 import { useAuthStore } from '@/store/authStore'
 import { signIn } from './authActions'
 
@@ -40,42 +40,32 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-950">
       <div className="w-full max-w-sm">
         <img src="/logo.png" alt="Canvas Workspace" className="mx-auto mb-8 h-10" />
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+          className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
         >
-          <h1 className="text-xl font-semibold text-gray-900">Sign in</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Sign in</h1>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-gray-600">Email</span>
-            <input
-              type="email"
-              autoComplete="username"
-              className="min-h-12 rounded-xl border border-gray-300 px-3 text-base focus:border-canvas-500 focus:outline-none"
-              {...register('email', { required: true })}
-            />
-            {errors.email && <span className="text-sm text-red-600">Email is required.</span>}
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Email</span>
+            <Input type="email" autoComplete="username" {...register('email', { required: true })} />
+            {errors.email && <span className="text-sm text-red-600 dark:text-red-400">Email is required.</span>}
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium text-gray-600">Password</span>
-            <input
-              type="password"
-              autoComplete="current-password"
-              className="min-h-12 rounded-xl border border-gray-300 px-3 text-base focus:border-canvas-500 focus:outline-none"
-              {...register('password', { required: true })}
-            />
-            {errors.password && <span className="text-sm text-red-600">Password is required.</span>}
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Password</span>
+            <Input type="password" autoComplete="current-password" {...register('password', { required: true })} />
+            {errors.password && <span className="text-sm text-red-600 dark:text-red-400">Password is required.</span>}
           </label>
 
-          <label className="flex items-center gap-2 text-sm text-gray-600">
+          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <input
               type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 text-canvas-500 focus:ring-canvas-500"
+              className="h-4 w-4 rounded border-gray-300 text-canvas-500 focus:ring-canvas-500 dark:border-gray-600 dark:bg-gray-800"
               {...register('rememberMe')}
             />
             Remember me
@@ -88,7 +78,7 @@ export function LoginPage() {
           <button
             type="button"
             onClick={() => navigate('/change-password')}
-            className="text-sm font-medium text-canvas-600 hover:text-canvas-700"
+            className="text-sm font-medium text-canvas-600 hover:text-canvas-700 dark:text-canvas-400 dark:hover:text-canvas-300"
           >
             Change Password
           </button>

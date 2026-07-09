@@ -25,9 +25,9 @@ export function ConfirmationScreen({ open, message, subMessage, onDone, autoClos
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-white px-6 text-center">
-      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100">
-        <svg viewBox="0 0 24 24" fill="none" className="h-12 w-12 text-green-600">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-white px-6 text-center dark:bg-gray-950">
+      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/10">
+        <svg viewBox="0 0 24 24" fill="none" className="h-12 w-12 text-green-600 dark:text-green-400">
           <path
             d="M5 13l4 4L19 7"
             stroke="currentColor"
@@ -39,8 +39,8 @@ export function ConfirmationScreen({ open, message, subMessage, onDone, autoClos
       </div>
 
       <div className="flex flex-col gap-1">
-        <p className="text-xl font-semibold text-gray-900">{message}</p>
-        {subMessage && <p className="text-base text-gray-500">{subMessage}</p>}
+        <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">{message}</p>
+        {subMessage && <p className="text-base text-gray-500 dark:text-gray-400">{subMessage}</p>}
       </div>
 
       {!autoCloseMs && (

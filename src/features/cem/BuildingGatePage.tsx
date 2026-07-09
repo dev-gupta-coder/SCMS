@@ -16,7 +16,7 @@ export function BuildingGatePage() {
   if (isError) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4 text-center">
-        <p className="text-gray-500">Could not load your buildings. Try again.</p>
+        <p className="text-gray-500 dark:text-gray-400">Could not load your buildings. Try again.</p>
       </div>
     )
   }
@@ -24,7 +24,7 @@ export function BuildingGatePage() {
   if (buildings.length === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4 text-center">
-        <p className="text-gray-500">You are not assigned to any building yet. Contact your Admin.</p>
+        <p className="text-gray-500 dark:text-gray-400">You are not assigned to any building yet. Contact your Admin.</p>
       </div>
     )
   }
@@ -35,11 +35,11 @@ export function BuildingGatePage() {
 
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4 px-4 py-6">
-      <h1 className="text-xl font-semibold text-gray-900">Choose a Building</h1>
+      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Choose a Building</h1>
       <div className="flex flex-col gap-3">
         {buildings.map((building) => (
           <Card key={building.id} onClick={() => navigate(`/cem/${building.id}`)}>
-            <span className="text-lg font-medium text-gray-900">{building.name}</span>
+            <span className="text-lg font-medium text-gray-900 dark:text-gray-100">{building.name}</span>
           </Card>
         ))}
       </div>

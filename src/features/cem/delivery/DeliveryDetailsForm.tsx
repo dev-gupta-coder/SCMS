@@ -21,8 +21,8 @@ export function DeliveryDetailsForm({ product, submitting, onSubmit }: DeliveryD
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="text-lg font-semibold text-gray-900">{product.name}</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{product.name}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Currently {product.current_stock} {product.unit} at Warehouse
         </p>
       </div>
@@ -36,9 +36,9 @@ export function DeliveryDetailsForm({ product, submitting, onSubmit }: DeliveryD
         unit={`per ${product.unit}`}
       />
 
-      <div className="rounded-xl bg-gray-50 px-4 py-3 text-center">
-        <span className="text-sm text-gray-500">Total</span>
-        <p className="text-2xl font-semibold text-gray-900">₹{total.toFixed(2)}</p>
+      <div className="rounded-xl bg-gray-50 px-4 py-3 text-center dark:bg-gray-800">
+        <span className="text-sm text-gray-500 dark:text-gray-400">Total</span>
+        <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">₹{total.toFixed(2)}</p>
       </div>
 
       <Button fullWidth disabled={!canSubmit} loading={submitting} onClick={() => onSubmit(quantity, price)}>

@@ -46,18 +46,18 @@ export function Modal({ open, onClose, title, children, footer, closeOnBackdrop 
         aria-label={title}
         onClick={(event) => event.stopPropagation()}
         className={cn(
-          'flex max-h-[90vh] w-full flex-col rounded-t-2xl bg-white shadow-xl sm:max-w-md sm:rounded-2xl',
+          'flex max-h-[90vh] w-full flex-col rounded-t-2xl bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100 sm:max-w-md sm:rounded-2xl',
           className,
         )}
       >
         {title && (
-          <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-            <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+          <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
             >
               <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5">
                 <path
@@ -73,7 +73,7 @@ export function Modal({ open, onClose, title, children, footer, closeOnBackdrop 
 
         <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
 
-        {footer && <div className="border-t border-gray-100 px-5 py-4">{footer}</div>}
+        {footer && <div className="border-t border-gray-100 px-5 py-4 dark:border-gray-800">{footer}</div>}
       </div>
     </div>,
     document.body,

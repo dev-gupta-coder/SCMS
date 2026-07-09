@@ -24,8 +24,8 @@ export type CardProps = StaticCardProps | TappableCardProps
  */
 export function Card({ children, selected = false, className, onClick, ...props }: CardProps) {
   const shared = cn(
-    'rounded-2xl border bg-white p-4 text-left shadow-sm transition-colors',
-    selected ? 'border-canvas-500 ring-2 ring-canvas-500' : 'border-gray-200',
+    'rounded-2xl border bg-white p-4 text-left text-gray-900 shadow-sm transition-colors dark:bg-gray-900 dark:text-gray-100',
+    selected ? 'border-canvas-500 ring-2 ring-canvas-500' : 'border-gray-200 dark:border-gray-800',
     className,
   )
 
@@ -34,7 +34,11 @@ export function Card({ children, selected = false, className, onClick, ...props 
       <button
         type="button"
         onClick={onClick}
-        className={cn(shared, 'w-full min-h-14 hover:border-canvas-300 hover:bg-canvas-50 active:bg-canvas-100')}
+        className={cn(
+          shared,
+          'w-full min-h-14 hover:border-canvas-300 hover:bg-canvas-50 active:bg-canvas-100',
+          'dark:hover:border-canvas-700 dark:hover:bg-canvas-500/10 dark:active:bg-canvas-500/20',
+        )}
         {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}

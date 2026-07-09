@@ -56,21 +56,26 @@ export function NumericKeypadInput({
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
-      {label && <span className="text-sm font-medium text-gray-600">{label}</span>}
+      {label && <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{label}</span>}
 
       <div
         className={cn(
-          'flex min-h-16 items-baseline gap-2 rounded-xl border bg-gray-50 px-4',
-          error ? 'border-red-400' : 'border-gray-200',
+          'flex min-h-16 items-baseline gap-2 rounded-xl border bg-gray-50 px-4 dark:bg-gray-800',
+          error ? 'border-red-400 dark:border-red-500' : 'border-gray-200 dark:border-gray-700',
         )}
       >
-        <span className={cn('text-3xl font-semibold tabular-nums', value ? 'text-gray-900' : 'text-gray-300')}>
+        <span
+          className={cn(
+            'text-3xl font-semibold tabular-nums',
+            value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-300 dark:text-gray-600',
+          )}
+        >
           {value || placeholder}
         </span>
-        {unit && <span className="text-base text-gray-500">{unit}</span>}
+        {unit && <span className="text-base text-gray-500 dark:text-gray-400">{unit}</span>}
       </div>
 
-      {error && <span className="text-sm font-medium text-red-600">{error}</span>}
+      {error && <span className="text-sm font-medium text-red-600 dark:text-red-400">{error}</span>}
 
       <div className="grid grid-cols-3 gap-2">
         {KEYS.map((key) => (
@@ -81,8 +86,9 @@ export function NumericKeypadInput({
             disabled={key === '.' && !allowDecimal}
             aria-label={key === 'backspace' ? 'Delete last digit' : key === '.' ? 'Decimal point' : key}
             className={cn(
-              'min-h-14 rounded-xl bg-gray-100 text-2xl font-semibold text-gray-900',
+              'min-h-14 rounded-xl bg-gray-100 text-2xl font-semibold text-gray-900 dark:bg-gray-800 dark:text-gray-100',
               'hover:bg-gray-200 active:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-30',
+              'dark:hover:bg-gray-700 dark:active:bg-gray-600',
             )}
           >
             {key === 'backspace' ? (
@@ -106,7 +112,7 @@ export function NumericKeypadInput({
         <button
           type="button"
           onClick={() => onChange('')}
-          className="self-center text-sm font-medium text-gray-400 hover:text-gray-600"
+          className="self-center text-sm font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
         >
           Clear
         </button>

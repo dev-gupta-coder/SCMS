@@ -14,15 +14,19 @@ export function StockProductPicker({ rows, onSelect }: StockProductPickerProps) 
   const groups = groupByCategory(rows)
 
   if (groups.length === 0) {
-    return <p className="text-center text-sm text-gray-400">No stock recorded yet at this location.</p>
+    return (
+      <p className="text-center text-sm text-gray-400 dark:text-gray-500">No stock recorded yet at this location.</p>
+    )
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-sm text-gray-500">Which product?</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400">Which product?</p>
       {groups.map((group) => (
         <section key={group.category} className="flex flex-col gap-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-400">{group.category}</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+            {group.category}
+          </h3>
           <div className="flex flex-col gap-2">
             {group.rows.map((row) => (
               <Card key={row.id} onClick={() => onSelect(row)} className="flex items-center gap-3 p-3">
@@ -30,8 +34,8 @@ export function StockProductPicker({ rows, onSelect }: StockProductPickerProps) 
                   {CATEGORY_ICON[row.product.category as ProductCategory] ?? '📦'}
                 </span>
                 <div className="flex flex-col">
-                  <span className="font-medium text-gray-900">{row.product.name}</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{row.product.name}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     {row.current_stock} {row.product.unit} here
                   </span>
                 </div>

@@ -39,21 +39,42 @@ export function CheckInPage() {
 
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-6">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-gray-900">{building?.name}</h1>
-        <div className="flex shrink-0 items-center gap-3">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{building?.name}</h1>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <button
             type="button"
             onClick={() => navigate(`/cem/${buildingId}/products`)}
-            className="text-sm font-medium text-canvas-600 hover:text-canvas-700"
+            className="text-sm font-medium text-canvas-600 hover:text-canvas-700 dark:text-canvas-400 dark:hover:text-canvas-300"
           >
             Products
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(`/cem/${buildingId}/ledger`)}
+            className="text-sm font-medium text-canvas-600 hover:text-canvas-700 dark:text-canvas-400 dark:hover:text-canvas-300"
+          >
+            My Ledger
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(`/cem/${buildingId}/alerts`)}
+            className="text-sm font-medium text-canvas-600 hover:text-canvas-700 dark:text-canvas-400 dark:hover:text-canvas-300"
+          >
+            Alerts
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/cem/note')}
+            className="text-sm font-medium text-canvas-600 hover:text-canvas-700 dark:text-canvas-400 dark:hover:text-canvas-300"
+          >
+            My Note
           </button>
           {buildings && buildings.length > 1 && (
             <button
               type="button"
               onClick={() => navigate('/cem')}
-              className="text-sm font-medium text-canvas-600 hover:text-canvas-700"
+              className="text-sm font-medium text-canvas-600 hover:text-canvas-700 dark:text-canvas-400 dark:hover:text-canvas-300"
             >
               Switch Building
             </button>
@@ -66,7 +87,7 @@ export function CheckInPage() {
       )}
 
       {stockQuery.isLoading && <LoadingScreen />}
-      {stockQuery.isError && <p className="text-sm text-red-600">Could not load stock. Try again.</p>}
+      {stockQuery.isError && <p className="text-sm text-red-600 dark:text-red-400">Could not load stock. Try again.</p>}
 
       {stockQuery.data &&
         (selectedLocation === 'all' ? (

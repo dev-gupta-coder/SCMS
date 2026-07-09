@@ -52,7 +52,7 @@ export function CheckInChecklist({
       </div>
 
       {groups.length === 0 ? (
-        <p className="text-center text-sm text-gray-400">No stock recorded yet at this location.</p>
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500">No stock recorded yet at this location.</p>
       ) : (
         groups.map((group) => <CategorySection key={group.category} category={group.category} rows={group.rows} />)
       )}

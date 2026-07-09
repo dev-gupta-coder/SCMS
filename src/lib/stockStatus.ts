@@ -1,6 +1,7 @@
 // PRD 10.7 / section 12: green = healthy, yellow = low stock, grey = no
 // threshold set. Grey is distinct from healthy — an unmonitored item must
-// never read as confirmed-healthy.
+// never read as confirmed-healthy. Shared by the CEM checklist and the
+// Admin dashboard, since both apply the exact same rule.
 export type StockStatus = 'healthy' | 'low' | 'no-threshold'
 
 export function getStockStatus(currentStock: number, threshold: number | null): StockStatus {

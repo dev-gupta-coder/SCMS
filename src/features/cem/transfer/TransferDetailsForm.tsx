@@ -23,8 +23,8 @@ export function TransferDetailsForm({ row, sourceFloorId, floors, submitting, on
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="text-lg font-semibold text-gray-900">{row.product.name}</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{row.product.name}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Currently {row.current_stock} {row.product.unit} here
         </p>
       </div>

@@ -44,11 +44,11 @@ export function AddProductPage() {
         <button
           type="button"
           onClick={() => navigate(`/cem/${buildingId}/products`)}
-          className="text-sm font-medium text-gray-500 hover:text-gray-700"
+          className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
         >
           Back
         </button>
-        <h1 className="text-xl font-semibold text-gray-900">Add Product</h1>
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Product</h1>
       </div>
 
       <ProductForm

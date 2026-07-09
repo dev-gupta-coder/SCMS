@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui'
 import { CATEGORY_ICON } from './categoryIcons'
-import { getStockStatus, STOCK_STATUS_STYLE } from './stockStatus'
+import { getStockStatus, STOCK_STATUS_STYLE } from '@/lib/stockStatus'
 import type { ProductCategory } from '@/lib/constants'
 import type { StockRow } from './types'
 
@@ -15,14 +15,14 @@ export function ProductRow({ row }: { row: StockRow }) {
           {CATEGORY_ICON[row.product.category as ProductCategory] ?? '📦'}
         </span>
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900">{row.product.name}</span>
-          <span className="text-sm text-gray-500">
+          <span className="font-medium text-gray-900 dark:text-gray-100">{row.product.name}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {row.current_stock} {row.product.unit}
           </span>
         </div>
       </div>
 
-      <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-gray-600">
+      <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-400">
         <span className={`h-2.5 w-2.5 rounded-full ${style.dot}`} aria-hidden="true" />
         {style.label}
       </span>
