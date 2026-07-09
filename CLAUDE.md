@@ -173,3 +173,11 @@ no matching styles). Apply them to every feature from now on:
   table of contents-style headers).
 - Prefer editing/extending existing files over creating parallel new ones.
 - Keep components small and colocated; don't scaffold folders you don't need yet.
+
+
+## Shared shell rule
+Admin and CEM top bars must be built from the SAME TopBar primitive/pattern
+— same logo sizing logic, same right-side action group order (dark toggle →
+name/role → Change Password → Sign Out). Never let one role's shell get
+updated without checking the other still matches. If a shell-affecting
+prompt only mentions one role, apply it to both and say so explicitly.
