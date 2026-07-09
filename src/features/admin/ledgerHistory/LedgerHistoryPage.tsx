@@ -79,8 +79,8 @@ export function LedgerHistoryPage() {
   const hasFilters = buildingId !== '' || floorId !== '' || productId !== '' || cemId !== ''
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-6">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Ledger History</h1>
+    <div className="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-2">
+      {/* <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Ledger History</h1> */}
 
       <div className="flex gap-2 border-b border-gray-200 dark:border-gray-800">
         {TABS.map((option) => (
@@ -140,14 +140,24 @@ export function LedgerHistoryPage() {
             ))}
           </Select>
 
-          <Select value={floorId} onChange={(event) => setFloorId(event.target.value)} disabled={!buildingId}>
+          {/* <Select value={floorId} onChange={(event) => setFloorId(event.target.value)} disabled={!buildingId}>
             <option value="">All Floors</option>
             {floorOptions.map((floor) => (
               <option key={floor.id} value={floor.id}>
                 {floor.floor_type === 'warehouse' ? 'Warehouse' : floor.name}
               </option>
             ))}
-          </Select>
+          </Select> */}
+          {tab === 'consumption' && (
+              <Select value={floorId} onChange={(event) => setFloorId(event.target.value)} disabled={!buildingId}>
+                <option value="">All Floors</option>
+                {floorOptions.map((floor) => (
+                  <option key={floor.id} value={floor.id}>
+                    {floor.floor_type === 'warehouse' ? 'Warehouse' : floor.name}
+                  </option>
+                ))}
+              </Select>
+            )}
 
           <Select value={productId} onChange={(event) => setProductId(event.target.value)}>
             <option value="">All Products</option>
@@ -182,7 +192,7 @@ export function LedgerHistoryPage() {
           </button>
         )}
       </div>
-
+        
       {entriesLoading && <LoadingScreen />}
       {isError && <p className="text-sm text-red-600 dark:text-red-400">Could not load ledger history. Try again.</p>}
 

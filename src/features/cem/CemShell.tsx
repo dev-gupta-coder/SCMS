@@ -1,16 +1,55 @@
-import { Outlet } from 'react-router-dom'
-import { ThemeToggle } from '@/components/ui'
+import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom'
+import { cn } from '@/lib/cn'
+import { TopBar } from '@/components/layout/TopBar'
+import { useProfile } from '@/features/auth/useProfile'
+import { useMyBuildings } from './api'
+import { BuildingSelector } from './BuildingSelector'
+import { AlertsIcon, LedgerIcon, NotesIcon, ProductsIcon } from './icons'
+import { navPillActive, navPillBase, navPillInactive } from './navPillStyles'
 
-/** Minimal persistent top bar shared by every CEM screen — mobile-first, so it stays out of the way of the one-decision-per-screen flows below it. Renders child routes via <Outlet />. */
+/** Persistent top bar shared by every CEM screen (PRD 11) — same TopBar primitive as Admin. Renders child routes via <Outlet />. */
 export function CemShell() {
+  const navigate = useNavigate()
+  const { buildingId } = useParams<{ buildingId: string }>()
+  const { data: profile } = useProfile()
+  const { data: buildings } = useMyBuildings()
+
+  const quickLinks = buildingId
+    ? [
+        { to: `/cem/${buildingId}/products`, label: 'Products', Icon: ProductsIcon },
+        { to: `/cem/${buildingId}/ledger`, label: 'Ledger', Icon: LedgerIcon },
+        { to: `/cem/${buildingId}/alerts`, label: 'Alerts', Icon: AlertsIcon },
+        { to: '/cem/note', label: 'Notes', Icon: NotesIcon },
+      ]
+    : []
+
   return (
     <div className="min-h-full">
-      <header className="sticky top-0 z-10 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-        <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-2">
-          <img src="/logo.png" alt="Canvas Workspace" className="h-6" />
-          <ThemeToggle />
-        </div>
-      </header>
+      <TopBar
+        sticky
+        maxWidthClassName="max-w-4xl"
+        userName={profile?.full_name}
+        roleBadge={profile?.role}
+        secondaryRow={
+          quickLinks.length > 0 && (
+            <>
+              {quickLinks.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  className={({ isActive }) => cn(navPillBase, isActive ? navPillActive : navPillInactive)}
+                >
+                  <link.Icon className="h-4 w-4 shrink-0" />
+                  {link.label}
+                </NavLink>
+              ))}
+              {buildingId && buildings && buildings.length > 1 && (
+                <BuildingSelector buildings={buildings} value={buildingId} onChange={(id) => navigate(`/cem/${id}`)} />
+              )}
+            </>
+          )
+        }
+      />
 
       <main>
         <Outlet />

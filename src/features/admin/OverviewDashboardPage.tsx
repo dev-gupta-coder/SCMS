@@ -30,7 +30,7 @@ export function OverviewDashboardPage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-4 py-8">
-      <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Overview</h1>
+      {/* <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Overview</h1> */}
 
       <StockHealthSummary
         overall={health?.overall ?? EMPTY_COUNTS}

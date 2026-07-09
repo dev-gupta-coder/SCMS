@@ -4,7 +4,7 @@ import type { AdminLedgerEntry } from './types'
 
 interface PurchaseHistoryTableProps {
   entries: AdminLedgerEntry[]
-  buildings: AdminBuildingFull[]
+  buildings: AdminBuildingFull[]  
 }
 
 /** PRD 11, Admin screen 8 — Purchase/Delivery History columns exactly as specified. */
