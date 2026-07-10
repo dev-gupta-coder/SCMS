@@ -30,6 +30,17 @@ export function CemShell() {
         maxWidthClassName="max-w-4xl"
         userName={profile?.full_name}
         roleBadge={profile?.role}
+        navItems={quickLinks.map((link) => ({
+          key: link.to,
+          to: link.to,
+          label: link.label,
+          icon: <link.Icon className="h-5 w-5 shrink-0" />,
+        }))}
+        drawerExtra={
+          buildingId && buildings && buildings.length > 1 ? (
+            <BuildingSelector buildings={buildings} value={buildingId} onChange={(id) => navigate(`/cem/${id}`)} />
+          ) : undefined
+        }
         secondaryRow={
           quickLinks.length > 0 && (
             <>

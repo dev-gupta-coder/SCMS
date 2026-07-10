@@ -181,3 +181,24 @@ Admin and CEM top bars must be built from the SAME TopBar primitive/pattern
 name/role → Change Password → Sign Out). Never let one role's shell get
 updated without checking the other still matches. If a shell-affecting
 prompt only mentions one role, apply it to both and say so explicitly.
+
+
+## Mobile Navigation Pattern (<768px)
+Both Admin and CEM use an off-canvas drawer on mobile, built as an extension
+of the existing TopBar primitive — never a second, separate nav component.
+
+- Below 768px: TopBar shows a hamburger icon (left) + compact icon-only logo
+  (public/favicon.png — already extracted, don't re-derive it) instead of the
+  full horizontal lockup.
+- Hamburger opens a left-side drawer, ~260-280px wide, slides in ~250ms,
+  closes on outside-click or on selecting any nav item.
+- Drawer content = the SAME nav items each shell already defines via TopBar's
+  navSlot/secondaryRow props — the drawer is a different rendering of those
+  existing items, not a new item list authored separately per shell.
+- Drawer structure: nav items on top (icon + label each, active item
+  highlighted in canvas purple, min 48px touch target), divider, then
+  user info + Change Password + Sign Out at the bottom.
+- 768px and above: unchanged — existing desktop/tablet nav stays exactly as
+  is, no drawer.
+- This is UI-only. No route, permission, auth, data-fetching, or naming
+  changes ride along with a nav-pattern change, ever.

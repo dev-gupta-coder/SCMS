@@ -2,15 +2,16 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { TopBar } from '@/components/layout/TopBar'
 import { useProfile } from '@/features/auth/useProfile'
+import { AnalyticsIcon, BuildingsIcon, CatalogIcon, CemsIcon, LedgerIcon, OverviewIcon, ReportsIcon } from './icons'
 
 const NAV_LINKS = [
-  { to: '/admin', label: 'Overview', end: true },
-  { to: '/admin/analytics', label: 'Analytics' },
-  { to: '/admin/buildings', label: 'Buildings' },
-  { to: '/admin/cems', label: 'CEMs' },
-  { to: '/admin/ledger', label: 'Ledger' },
-  { to: '/admin/products', label: 'Catalog' },
-  { to: '/admin/reports', label: 'Reports' },
+  { to: '/admin', label: 'Overview', end: true, Icon: OverviewIcon },
+  { to: '/admin/analytics', label: 'Analytics', Icon: AnalyticsIcon },
+  { to: '/admin/buildings', label: 'Buildings', Icon: BuildingsIcon },
+  { to: '/admin/cems', label: 'CEMs', Icon: CemsIcon },
+  { to: '/admin/ledger', label: 'Ledger', Icon: LedgerIcon },
+  { to: '/admin/products', label: 'Catalog', Icon: CatalogIcon },
+  { to: '/admin/reports', label: 'Reports', Icon: ReportsIcon },
 ]
 
 /** Persistent desktop-first top nav shared by every Admin screen (PRD 11). Renders child routes via <Outlet />. */
@@ -39,6 +40,13 @@ export function AdminShell() {
             {link.label}
           </NavLink>
         ))}
+        navItems={NAV_LINKS.map((link) => ({
+          key: link.to,
+          to: link.to,
+          label: link.label,
+          end: link.end,
+          icon: <link.Icon className="h-5 w-5 shrink-0" />,
+        }))}
       />
 
       <main>
