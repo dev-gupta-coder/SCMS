@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Button, toast } from '@/components/ui'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { useMyNote, useSaveMyNote } from './api'
 
 export function NotePage() {
-  const navigate = useNavigate()
   const { data: content, isLoading } = useMyNote()
   const saveNote = useSaveMyNote()
   const [draft, setDraft] = useState('')

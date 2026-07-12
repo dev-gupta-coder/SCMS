@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+
 import { Input, Select } from '@/components/ui'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { useFloors } from '../api'
@@ -10,7 +11,6 @@ import { LedgerEntryRow } from '@/features/ledger/LedgerEntryRow'
 /** PRD 11, CEM App screen 10 — My Ledger, scoped to the current building. */
 export function LedgerPage() {
   const { buildingId } = useParams<{ buildingId: string }>()
-  const navigate = useNavigate()
 
   const [productId, setProductId] = useState('')
   const [fromDate, setFromDate] = useState('')

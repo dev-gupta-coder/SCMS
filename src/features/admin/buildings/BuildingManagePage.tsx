@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Button, Input, Modal, toast } from '@/components/ui'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { useFloors } from '@/features/cem/api'
@@ -8,8 +8,6 @@ import { useAllBuildingsFull, useCreateFloor, useUpdateBuilding, useUpdateFloor 
 /** PRD 11, Admin screen 5 — building fields + floor CRUD (warehouse excluded from manual creation/rename). */
 export function BuildingManagePage() {
   const { buildingId } = useParams<{ buildingId: string }>()
-  const navigate = useNavigate()
-
   const { data: buildings, isLoading: buildingsLoading } = useAllBuildingsFull()
   const building = buildings?.find((b) => b.id === buildingId)
   const { data: floors, isLoading: floorsLoading } = useFloors(buildingId)

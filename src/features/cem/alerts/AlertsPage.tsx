@@ -1,11 +1,11 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+
 import { Card } from '@/components/ui'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { useActiveAlerts } from './api'
 
 export function AlertsPage() {
   const { buildingId } = useParams<{ buildingId: string }>()
-  const navigate = useNavigate()
   const { data: alerts, isLoading, isError } = useActiveAlerts(buildingId)
 
   if (isLoading) return <LoadingScreen />
