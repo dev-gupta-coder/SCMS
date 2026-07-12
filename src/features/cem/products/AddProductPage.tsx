@@ -1,17 +1,18 @@
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from '@/components/ui'
-import { LoadingScreen } from '@/components/LoadingScreen'
-import { isDuplicateNameError, useCreateProduct, useProducts } from './api'
+import { isDuplicateNameError, useCreateProduct, useLinkProductToBuilding } from './api'
 import { ProductForm } from './ProductForm'
 import type { ProductFormValues } from './ProductForm'
+import type { ProductSearchResult } from './types'
 
 export function AddProductPage() {
   const { buildingId } = useParams<{ buildingId: string }>()
   const navigate = useNavigate()
-  const { data: products, isLoading } = useProducts(buildingId)
   const createProduct = useCreateProduct()
+  const linkExisting = useLinkProductToBuilding()
+  const [linkingProductId, setLinkingProductId] = useState<string | null>(null)
 
-  if (isLoading) return <LoadingScreen />
   if (!buildingId) return null
 
   const handleSubmit = async (values: ProductFormValues) => {
@@ -22,7 +23,6 @@ export function AddProductPage() {
         model: values.model.trim() || null,
         category: values.category,
         unit: values.unit,
-        priority: values.priority,
         vendorName: values.vendorName.trim() || null,
         pricePerUnit: Number(values.pricePerUnit) || 0,
         lowStockThreshold: values.lowStockThreshold === '' ? null : Number(values.lowStockThreshold),
@@ -32,39 +32,46 @@ export function AddProductPage() {
     } catch (err) {
       toast.error(
         isDuplicateNameError(err)
-          ? 'A product with this name already exists in this building.'
+          ? 'A product with this name and model already exists — use the matches list above to link it to your building instead.'
           : 'Could not add product. Try again.',
       )
+    }
+  }
+
+  const handleLinkExisting = async (product: ProductSearchResult) => {
+    setLinkingProductId(product.id)
+    try {
+      await linkExisting.mutateAsync({ buildingId, productId: product.id, lowStockThreshold: null })
+      toast.success(`"${product.name}" linked to this building.`)
+      navigate(`/cem/${buildingId}/products/${product.id}/edit`, { replace: true })
+    } catch {
+      toast.error('Could not link product. Try again.')
+    } finally {
+      setLinkingProductId(null)
     }
   }
 
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-6">
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => navigate(`/cem/${buildingId}/products`)}
-          className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          Back
-        </button>
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Product</h1>
       </div>
 
       <ProductForm
+        buildingId={buildingId}
         initialValues={{
           name: '',
           model: '',
           category: '',
           unit: '',
-          priority: '',
           vendorName: '',
           pricePerUnit: '',
           lowStockThreshold: '',
         }}
         submitLabel="Add Product"
         submitting={createProduct.isPending}
-        existingProducts={products ?? []}
+        onLinkExisting={handleLinkExisting}
+        linkingProductId={linkingProductId}
         onSubmit={handleSubmit}
       />
     </div>

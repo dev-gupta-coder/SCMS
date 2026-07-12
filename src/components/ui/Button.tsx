@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger'
-type ButtonSize = 'lg' | 'md'
+type ButtonSize = 'lg' | 'md' | 'sm'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Every button carries a visible text label — no icon-only actions (PRD 10.2). */
@@ -26,6 +26,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 const sizeClasses: Record<ButtonSize, string> = {
   lg: 'min-h-14 px-6 text-lg',
   md: 'min-h-11 px-4 text-base',
+  sm: 'min-h-8 px-3 text-sm',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

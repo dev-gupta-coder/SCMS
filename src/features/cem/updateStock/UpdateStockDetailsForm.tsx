@@ -62,7 +62,7 @@ export function UpdateStockDetailsForm({ row, submitting, onSubmit }: UpdateStoc
       </div>
 
       <Button fullWidth disabled={!canSubmit} loading={submitting} onClick={() => onSubmit(quantity, reason)}>
-        Confirm
+        Update Stock{/* was "Confirm" */}
       </Button>
     </div>
   )

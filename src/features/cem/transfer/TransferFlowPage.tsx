@@ -22,7 +22,7 @@ export function TransferFlowPage() {
 
   const { data: floors, isLoading: floorsLoading } = useFloors(buildingId)
   const fromFloor = floors?.find((f) => f.id === fromFloorId)
-  const stockQuery = useLocationStock({ type: 'floor', floorId: fromFloorId })
+  const stockQuery = useLocationStock({ type: 'floor', buildingId: buildingId ?? '', floorId: fromFloorId })
   const logTransfer = useLogTransfer()
 
   const [step, setStep] = useState<Step>({ name: 'select' })
@@ -67,13 +67,6 @@ export function TransferFlowPage() {
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-6">
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => (step.name === 'details' ? setStep({ name: 'select' }) : goBackToCheckIn())}
-          className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          Back
-        </button>
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Transfer Stock</h1>
       </div>
 

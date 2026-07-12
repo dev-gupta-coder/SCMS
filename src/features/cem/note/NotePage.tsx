@@ -28,13 +28,6 @@ export function NotePage() {
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-6">
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          Back
-        </button>
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Note</h1>
       </div>
 

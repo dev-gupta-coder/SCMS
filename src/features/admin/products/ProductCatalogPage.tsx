@@ -4,7 +4,13 @@ import { LoadingScreen } from '@/components/LoadingScreen'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { useProductCatalog, useToggleProductActive } from './api'
 
-/** PRD 11, Admin screen 7 — read-only list across all buildings, deactivate toggle only (no create/edit). */
+/**
+ * PRD 11, Admin screen 7 — read-only catalog, deactivate toggle only.
+ * Global Products (CLAUDE.md): a row here is one global product, not
+ * per-building — linked buildings are shown as a secondary detail, and
+ * Admin has no edit rights on name/model/category/unit/price/vendor at
+ * all, so there is deliberately no edit form on this screen.
+ */
 export function ProductCatalogPage() {
   const { data: products, isLoading } = useProductCatalog()
   const toggleActive = useToggleProductActive()
@@ -13,11 +19,15 @@ export function ProductCatalogPage() {
 
   const buildingOptions = useMemo(() => {
     const map = new Map<string, string>()
-    for (const product of products ?? []) map.set(product.building.id, product.building.name)
+    for (const product of products ?? []) {
+      for (const building of product.buildings) map.set(building.id, building.name)
+    }
     return Array.from(map, ([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name))
   }, [products])
 
-  const filtered = (products ?? []).filter((product) => !buildingFilter || product.building.id === buildingFilter)
+  const filtered = (products ?? []).filter(
+    (product) => !buildingFilter || product.buildings.some((building) => building.id === buildingFilter),
+  )
 
   const groups = PRODUCT_CATEGORIES.map((category) => ({
     category,
@@ -73,13 +83,14 @@ export function ProductCatalogPage() {
                         )}
                       </span>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {product.building.name}
-                        {product.model && ` · ${product.model}`}
-                        {product.vendor_name && ` · ${product.vendor_name}`}
+                        {product.model && `${product.model} · `}
+                        {product.vendor_name && `${product.vendor_name} · `}₹{product.current_price_per_unit}/
+                        {product.unit} · {product.priority}
                       </span>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        ₹{product.current_price_per_unit}/{product.unit} · {product.priority}
-                        {product.low_stock_threshold != null && ` · Threshold: ${product.low_stock_threshold}`}
+                        {product.buildings.length > 0
+                          ? `Linked to: ${product.buildings.map((building) => building.name).join(', ')}`
+                          : 'Not linked to any building'}
                       </span>
                     </div>
                     <Button

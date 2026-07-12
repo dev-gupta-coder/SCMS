@@ -35,18 +35,52 @@ export function useBuilding(buildingId: string | undefined) {
   })
 }
 
+interface RawBuildingStockRow {
+  id: string
+  current_stock: number
+  floor_id: string
+  floor: { id: string; name: string; floor_type: 'warehouse' | 'floor' }
+  product: { id: string; name: string; unit: string; category: string; is_active: boolean }
+}
+
 async function fetchBuildingStock(buildingId: string): Promise<BuildingStockRow[]> {
   // Unlike the CEM checklist, this includes every row regardless of stock
   // level or product.is_active — Admin needs the complete picture, not the
-  // daily-workflow simplification.
-  const { data, error } = await supabase
-    .from('inventory_stock')
-    .select(
-      'id, current_stock, floor_id, floor:floors!inner(id, name, floor_type, building_id), product:products!inner(id, name, unit, category, low_stock_threshold, is_active)',
-    )
-    .eq('floor.building_id', buildingId)
+  // daily-workflow simplification. low_stock_threshold and this
+  // building's own show/hide now live on building_products (migration
+  // 0008), fetched separately and merged by product_id since buildingId
+  // is fixed here (unlike fetchStockHealth, which spans every building).
+  const [{ data, error }, { data: links, error: linksError }] = await Promise.all([
+    supabase
+      .from('inventory_stock')
+      .select(
+        'id, current_stock, floor_id, floor:floors!inner(id, name, floor_type, building_id), product:products!inner(id, name, unit, category, is_active)',
+      )
+      .eq('floor.building_id', buildingId),
+    supabase.from('building_products').select('product_id, low_stock_threshold, is_active').eq('building_id', buildingId),
+  ])
   if (error) throw error
-  return data as unknown as BuildingStockRow[]
+  if (linksError) throw linksError
+
+  const linkByProduct = new Map((links ?? []).map((link) => [link.product_id, link]))
+
+  return (data as unknown as RawBuildingStockRow[]).map((row) => {
+    const link = linkByProduct.get(row.product.id)
+    return {
+      id: row.id,
+      current_stock: row.current_stock,
+      floor_id: row.floor_id,
+      floor: row.floor,
+      product: {
+        id: row.product.id,
+        name: row.product.name,
+        unit: row.product.unit,
+        category: row.product.category,
+        low_stock_threshold: link?.low_stock_threshold ?? null,
+        is_active: (link?.is_active ?? false) && row.product.is_active,
+      },
+    }
+  })
 }
 
 export function useBuildingStock(buildingId: string | undefined) {

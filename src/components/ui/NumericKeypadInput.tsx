@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { cn } from '@/lib/cn'
 
 export interface NumericKeypadInputProps {
@@ -15,8 +16,30 @@ export interface NumericKeypadInputProps {
   className?: string
 }
 
-const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'backspace'] as const
+/** Strips a raw text-input edit down to a valid numeric string: digits, at most one ".", capped decimal places. */
+function sanitizeNumericInput(raw: string, allowDecimal: boolean, maxDecimals: number): string {
+  let cleaned = raw.replace(/[^\d.]/g, '')
+  if (!allowDecimal) cleaned = cleaned.replace(/\./g, '')
 
+  const firstDot = cleaned.indexOf('.')
+  if (firstDot !== -1) {
+    cleaned = cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '')
+  }
+
+  if (cleaned.includes('.')) {
+    const [whole, decimals] = cleaned.split('.')
+    cleaned = maxDecimals > 0 ? `${whole}.${decimals.slice(0, maxDecimals)}` : whole
+  }
+
+  return cleaned
+}
+
+/**
+ * CLAUDE.md UX Polish: swapped from an on-screen button grid to a native
+ * <input inputMode="decimal"> so mobile shows the OS numeric keyboard —
+ * the external props/contract (raw numeric string in `value`, same
+ * `onChange`) are unchanged so every existing call site keeps working.
+ */
 export function NumericKeypadInput({
   value,
   onChange,
@@ -28,35 +51,15 @@ export function NumericKeypadInput({
   maxDecimals = 2,
   className,
 }: NumericKeypadInputProps) {
-  const handleKeyPress = (key: (typeof KEYS)[number]) => {
-    if (key === 'backspace') {
-      onChange(value.slice(0, -1))
-      return
-    }
-
-    if (key === '.') {
-      if (!allowDecimal || value.includes('.')) return
-      onChange(value === '' ? '0.' : `${value}.`)
-      return
-    }
-
-    if (value.includes('.')) {
-      const decimals = value.split('.')[1] ?? ''
-      if (decimals.length >= maxDecimals) return
-    }
-
-    // Avoid a leading extra zero, e.g. "0" + "5" -> "5", not "05".
-    if (value === '0') {
-      onChange(key)
-      return
-    }
-
-    onChange(value + key)
-  }
+  const inputId = useId()
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
-      {label && <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{label}</span>}
+    <div className={cn('flex flex-col gap-2', className)}>
+      {label && (
+        <label htmlFor={inputId} className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          {label}
+        </label>
+      )}
 
       <div
         className={cn(
@@ -64,49 +67,23 @@ export function NumericKeypadInput({
           error ? 'border-red-400 dark:border-red-500' : 'border-gray-200 dark:border-gray-700',
         )}
       >
-        <span
+        <input
+          id={inputId}
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
+          value={value}
+          placeholder={placeholder}
+          onChange={(event) => onChange(sanitizeNumericInput(event.target.value, allowDecimal, maxDecimals))}
           className={cn(
-            'text-3xl font-semibold tabular-nums',
-            value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-300 dark:text-gray-600',
+            'min-w-0 flex-1 bg-transparent text-3xl font-semibold tabular-nums text-gray-900 outline-none dark:text-gray-100',
+            'placeholder:text-gray-300 dark:placeholder:text-gray-600',
           )}
-        >
-          {value || placeholder}
-        </span>
+        />
         {unit && <span className="text-base text-gray-500 dark:text-gray-400">{unit}</span>}
       </div>
 
       {error && <span className="text-sm font-medium text-red-600 dark:text-red-400">{error}</span>}
-
-      <div className="grid grid-cols-3 gap-2">
-        {KEYS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => handleKeyPress(key)}
-            disabled={key === '.' && !allowDecimal}
-            aria-label={key === 'backspace' ? 'Delete last digit' : key === '.' ? 'Decimal point' : key}
-            className={cn(
-              'min-h-14 rounded-xl bg-gray-100 text-2xl font-semibold text-gray-900 dark:bg-gray-800 dark:text-gray-100',
-              'hover:bg-gray-200 active:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-30',
-              'dark:hover:bg-gray-700 dark:active:bg-gray-600',
-            )}
-          >
-            {key === 'backspace' ? (
-              <svg viewBox="0 0 24 24" fill="none" className="mx-auto h-6 w-6">
-                <path
-                  d="M9 6h11a1 1 0 011 1v10a1 1 0 01-1 1H9l-6-6 6-6z"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinejoin="round"
-                />
-                <path d="M13 10l4 4m0-4l-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              </svg>
-            ) : (
-              key
-            )}
-          </button>
-        ))}
-      </div>
 
       {value !== '' && (
         <button

@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { TopBar } from '@/components/layout/TopBar'
+import { LoadingScreen } from '@/components/LoadingScreen'
 import { useProfile } from '@/features/auth/useProfile'
 import { useMyBuildings } from './api'
 import { BuildingSelector } from './BuildingSelector'
@@ -12,9 +13,18 @@ export function CemShell() {
   const navigate = useNavigate()
   const { buildingId } = useParams<{ buildingId: string }>()
   const { data: profile } = useProfile()
-  const { data: buildings } = useMyBuildings()
+  const { data: buildings, isLoading: buildingsLoading } = useMyBuildings()
 
-  const quickLinks = buildingId
+  // Single access check for the whole /cem/:buildingId/* tree (Known gap,
+  // CLAUDE.md) — RLS already blocks the data either way, this is just so an
+  // unassigned CEM sees a clear message instead of an empty page shell.
+  // While buildings is still loading, hold off on both the shell and the
+  // child route (matches BuildingGatePage's own isLoading pattern) so a
+  // direct/reloaded URL never mounts the child page before access is known.
+  const buildingAccessKnown = !buildingId || !buildingsLoading
+  const hasBuildingAccess = !buildingId || (buildings ?? []).some((building) => building.id === buildingId)
+
+  const quickLinks = buildingId && buildingAccessKnown && hasBuildingAccess
     ? [
         { to: `/cem/${buildingId}/products`, label: 'Products', Icon: ProductsIcon },
         { to: `/cem/${buildingId}/ledger`, label: 'Ledger', Icon: LedgerIcon },
@@ -37,7 +47,7 @@ export function CemShell() {
           icon: <link.Icon className="h-5 w-5 shrink-0" />,
         }))}
         drawerExtra={
-          buildingId && buildings && buildings.length > 1 ? (
+          buildingId && buildingAccessKnown && hasBuildingAccess && buildings && buildings.length > 1 ? (
             <BuildingSelector buildings={buildings} value={buildingId} onChange={(id) => navigate(`/cem/${id}`)} />
           ) : undefined
         }
@@ -54,7 +64,7 @@ export function CemShell() {
                   {link.label}
                 </NavLink>
               ))}
-              {buildingId && buildings && buildings.length > 1 && (
+              {buildingId && buildingAccessKnown && hasBuildingAccess && buildings && buildings.length > 1 && (
                 <BuildingSelector buildings={buildings} value={buildingId} onChange={(id) => navigate(`/cem/${id}`)} />
               )}
             </>
@@ -63,7 +73,17 @@ export function CemShell() {
       />
 
       <main>
-        <Outlet />
+        {!buildingAccessKnown ? (
+          <LoadingScreen />
+        ) : hasBuildingAccess ? (
+          <Outlet />
+        ) : (
+          <div className="flex min-h-[60vh] items-center justify-center px-4 text-center">
+            <p className="text-gray-500 dark:text-gray-400">
+              You are not assigned to this building. Contact your Admin.
+            </p>
+          </div>
+        )}
       </main>
     </div>
   )

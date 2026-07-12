@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Card } from '@/components/ui'
+import { Card, CollapsibleList } from '@/components/ui'
 import { STOCK_STATUS_STYLE } from '@/lib/stockStatus'
 import type { LocationScope } from './api'
 import type { StockStatusFilter } from './OverviewDashboardPage'
@@ -126,29 +126,32 @@ export function StockHealthSummary({
             {buildings.length === 0 ? 'No buildings yet.' : 'No buildings match this filter.'}
           </p>
         ) : (
-          visibleBuildings.map((building) => (
-            <Card
-              key={building.buildingId}
-              onClick={() => navigate(`/admin/buildings/${building.buildingId}`)}
-              className="flex items-center justify-between p-3"
-            >
-              <span className="font-medium text-gray-900 dark:text-gray-100">{building.buildingName}</span>
-              <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                <span className="flex items-center gap-1">
-                  <span className={`h-2 w-2 rounded-full ${STOCK_STATUS_STYLE.healthy.dot}`} aria-hidden="true" />
-                  {building.healthy}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className={`h-2 w-2 rounded-full ${STOCK_STATUS_STYLE.low.dot}`} aria-hidden="true" />
-                  {building.low}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className={`h-2 w-2 rounded-full ${STOCK_STATUS_STYLE['no-threshold'].dot}`} aria-hidden="true" />
-                  {building.noThreshold}
-                </span>
-              </div>
-            </Card>
-          ))
+          <CollapsibleList
+            items={visibleBuildings}
+            itemKey={(building) => building.buildingId}
+            renderItem={(building) => (
+              <Card
+                onClick={() => navigate(`/admin/buildings/${building.buildingId}`)}
+                className="flex items-center justify-between p-3"
+              >
+                <span className="font-medium text-gray-900 dark:text-gray-100">{building.buildingName}</span>
+                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <span className={`h-2 w-2 rounded-full ${STOCK_STATUS_STYLE.healthy.dot}`} aria-hidden="true" />
+                    {building.healthy}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className={`h-2 w-2 rounded-full ${STOCK_STATUS_STYLE.low.dot}`} aria-hidden="true" />
+                    {building.low}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className={`h-2 w-2 rounded-full ${STOCK_STATUS_STYLE['no-threshold'].dot}`} aria-hidden="true" />
+                    {building.noThreshold}
+                  </span>
+                </div>
+              </Card>
+            )}
+          />
         )}
       </div>
     </div>

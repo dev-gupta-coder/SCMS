@@ -35,13 +35,6 @@ export function BuildingDetailPage() {
     <div className="mx-auto flex max-w-2xl flex-col gap-10 px-4 py-8">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => navigate('/admin')}
-            className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            Back
-          </button>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
             {building.name}
             {!building.is_active && (

@@ -19,7 +19,6 @@ export interface ProductInfo {
   name: string
   category: string
   unit: string
-  priority: string
   low_stock_threshold: number | null
 }
 

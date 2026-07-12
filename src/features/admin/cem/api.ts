@@ -7,12 +7,13 @@ export interface CemProfile {
   full_name: string
   personal_email: string | null
   phone: string | null
+  is_active: boolean
 }
 
 async function fetchCems(): Promise<CemProfile[]> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, full_name, personal_email, phone')
+    .select('id, full_name, personal_email, phone, is_active')
     .eq('role', 'cem')
     .order('full_name')
   if (error) throw error
@@ -21,6 +22,31 @@ async function fetchCems(): Promise<CemProfile[]> {
 
 export function useCems() {
   return useQuery({ queryKey: ['admin', 'cems'], queryFn: fetchCems })
+}
+
+interface SetCemActiveParams {
+  cemId: string
+  isActive: boolean
+}
+
+async function setCemActive(params: SetCemActiveParams): Promise<void> {
+  // Non-destructive (CLAUDE.md UX Polish / migration 0013) — flips
+  // profiles.is_active only. cem_building_assignments rows are never
+  // touched here; has_building_access/is_assigned_cem are the only places
+  // that gate on this flag.
+  const { error } = await supabase.rpc('set_cem_active', {
+    p_cem_id: params.cemId,
+    p_is_active: params.isActive,
+  })
+  if (error) throw error
+}
+
+export function useSetCemActive() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: setCemActive,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'cems'] }),
+  })
 }
 
 export interface CemAssignment {

@@ -37,6 +37,11 @@ export function useAllFloors() {
   return useQuery({ queryKey: ['admin', 'floors'], queryFn: fetchAllFloors })
 }
 
+/** True for a unique_violation on the case/whitespace-insensitive name index (migration 0013) — same pattern as cem/products/api.ts's isDuplicateNameError. */
+export function isDuplicateBuildingNameError(err: unknown): boolean {
+  return typeof err === 'object' && err !== null && (err as { code?: string }).code === '23505'
+}
+
 interface CreateBuildingParams {
   name: string
   address: string | null
@@ -45,10 +50,18 @@ interface CreateBuildingParams {
 async function createBuilding(params: CreateBuildingParams): Promise<string> {
   const { data, error } = await supabase.rpc('create_building', { p_name: params.name, p_address: params.address })
   if (error) throw error
-  return data as string
+  const buildingId = data as string
+
+  // Not bundled into create_building itself (migration 0006) — a separate
+  // call right after, per CLAUDE.md Global Products: a new building must
+  // retroactively inherit every existing active product, not start empty.
+  const { error: linkError } = await supabase.rpc('link_all_products_to_building', { p_building_id: buildingId })
+  if (linkError) throw linkError
+
+  return buildingId
 }
 
-/** Atomic: building insert + its auto-created warehouse floor (see migration 0006). */
+/** Atomic: building insert + its auto-created warehouse floor (see migration 0006), followed by inheriting the existing product catalog (migration 0011). */
 export function useCreateBuilding() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -94,7 +107,13 @@ interface CreateFloorParams {
 }
 
 async function createFloor(params: CreateFloorParams): Promise<string> {
-  const { data, error } = await supabase.rpc('create_floor', { p_building_id: params.buildingId, p_name: params.name })
+  // This UI only ever creates non-warehouse floors — the warehouse floor is
+  // auto-created inside create_building — so p_floor_type is always 'floor'.
+  const { data, error } = await supabase.rpc('create_floor', {
+    p_building_id: params.buildingId,
+    p_name: params.name,
+    p_floor_type: 'floor',
+  })
   if (error) throw error
   return data as string
 }

@@ -27,28 +27,35 @@ export function CheckInChecklist({
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-        {locationType === 'warehouse' &&
-          (onLogDelivery ? (
-            <Button onClick={onLogDelivery}>Delivery Arrived</Button>
+          {locationType === 'warehouse' &&
+            (onLogDelivery ? (
+              <Button onClick={onLogDelivery}>Log Delivery{/* was "Delivery Arrived" */}</Button>
+            ) : (
+              <Button variant="secondary" disabled title="Coming in a later build step">
+                Log Delivery{/* was "Delivery Arrived" */}
+              </Button>
+            ))}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" >  
+          {onTransferStock ? (
+            <Button 
+                className='bg-green-500 hover:bg-green-600'
+            onClick={onTransferStock}>Transfer Stock</Button>
           ) : (
             <Button variant="secondary" disabled title="Coming in a later build step">
-              Delivery Arrived
+              Transfer Stock
             </Button>
-          ))}
-        {onTransferStock ? (
-          <Button onClick={onTransferStock}>Transfer Stock</Button>
-        ) : (
-          <Button variant="secondary" disabled title="Coming in a later build step">
-            Transfer Stock
-          </Button>
-        )}
-        {onUpdateStock ? (
-          <Button onClick={onUpdateStock}>Update Stock</Button>
-        ) : (
-          <Button variant="secondary" disabled title="Coming in a later build step">
-            Update Stock
-          </Button>
-        )}
+          )}
+          {onUpdateStock ? (
+            <Button 
+              className='bg-yellow-500 hover:bg-yellow-600'
+            onClick={onUpdateStock}>Update Stock</Button>
+          ) : (
+            <Button 
+            variant="secondary" disabled title="Coming in a later build step">
+              Update Stock
+            </Button>
+          )}
+        </div>  
       </div>
 
       {groups.length === 0 ? (

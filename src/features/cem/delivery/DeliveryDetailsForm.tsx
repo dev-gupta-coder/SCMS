@@ -42,7 +42,7 @@ export function DeliveryDetailsForm({ product, submitting, onSubmit }: DeliveryD
       </div>
 
       <Button fullWidth disabled={!canSubmit} loading={submitting} onClick={() => onSubmit(quantity, price)}>
-        Confirm
+        Log Delivery{/* was "Confirm" */}
       </Button>
     </div>
   )

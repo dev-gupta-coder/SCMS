@@ -31,7 +31,9 @@ export function CheckInPage() {
   const floorIds = useMemo(() => floors?.map((f) => f.id) ?? [], [floors])
 
   const stockQuery = useLocationStock(
-    selectedLocation === 'all' ? { type: 'all', floorIds } : { type: 'floor', floorId: selectedLocation },
+    selectedLocation === 'all'
+      ? { type: 'all', buildingId: buildingId ?? '', floorIds }
+      : { type: 'floor', buildingId: buildingId ?? '', floorId: selectedLocation },
   )
 
   if (buildingsLoading || floorsLoading) return <LoadingScreen />

@@ -40,7 +40,7 @@ export function TransferDetailsForm({ row, sourceFloorId, floors, submitting, on
       <DestinationPicker floors={floors} excludeFloorId={sourceFloorId} value={toFloorId} onSelect={setToFloorId} />
 
       <Button fullWidth disabled={!canSubmit} loading={submitting} onClick={() => onSubmit(quantity, toFloorId)}>
-        Confirm
+        Transfer Stock{/* was "Confirm" */}
       </Button>
     </div>
   )

@@ -202,6 +202,8 @@ export function TopBar({
             <HamburgerIcon className="h-6 w-6" />
           </button>
           <img src="/favicon.png" alt="Canvas Workspace" className="h-8 w-8 shrink-0" />
+          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Canvas Workspace</span>
+
           <div className="flex-1" />
           <ThemeToggle />
         </div>

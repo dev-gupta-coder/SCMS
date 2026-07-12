@@ -1,42 +1,51 @@
-import { useState } from 'react'
-import { Button, Input, NumericKeypadInput, Select } from '@/components/ui'
-import { PRODUCT_CATEGORIES, PRODUCT_PRIORITIES, PRODUCT_UNITS } from '@/lib/constants'
+import { useEffect, useState } from 'react'
+import { Button, Card, Input, NumericKeypadInput, Select } from '@/components/ui'
+import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from '@/lib/constants'
+import { useProductSearch } from './api'
+import type { ProductSearchResult } from './types'
 
 export interface ProductFormValues {
   name: string
   model: string
   category: string
   unit: string
-  priority: string
   vendorName: string
   pricePerUnit: string
   lowStockThreshold: string
 }
 
-interface ExistingProduct {
-  id: string
-  name: string
-  name_normalized: string
-}
-
 interface ProductFormProps {
+  buildingId: string
   initialValues: ProductFormValues
   submitLabel: string
   submitting: boolean
-  /** Every product in the building (active + inactive) — the unique(building_id, name_normalized) constraint doesn't care about is_active. */
-  existingProducts: ExistingProduct[]
-  /** When editing, exclude the product's own row from the dedup check. */
+  /** Edit mode: exclude the product's own row from duplicate/reuse matching. */
   excludeProductId?: string
+  /** Add mode only — when provided, renders the reuse-search list; calling it links an existing global product to this building instead of creating a new one. */
+  onLinkExisting?: (product: ProductSearchResult) => void
+  linkingProductId?: string | null
   onSubmit: (values: ProductFormValues) => void
+}
+
+/** Debounces so search-as-you-type doesn't fire a query on every keystroke. */
+function useDebouncedValue<T>(value: T, delayMs: number): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delayMs)
+    return () => clearTimeout(timer)
+  }, [value, delayMs])
+  return debounced
 }
 
 /** PRD 11, CEM App screens 8-9 — same fields for Add and Edit. */
 export function ProductForm({
+  buildingId,
   initialValues,
   submitLabel,
   submitting,
-  existingProducts,
   excludeProductId,
+  onLinkExisting,
+  linkingProductId,
   onSubmit,
 }: ProductFormProps) {
   const [values, setValues] = useState<ProductFormValues>(initialValues)
@@ -44,21 +53,32 @@ export function ProductForm({
   const update = <K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) =>
     setValues((prev) => ({ ...prev, [key]: value }))
 
+  const debouncedName = useDebouncedValue(values.name, 300)
+  const { data: searchResults } = useProductSearch(buildingId, debouncedName)
+  const matches = (searchResults ?? []).filter((p) => p.id !== excludeProductId)
+
   const normalizedName = values.name.trim().toLowerCase()
-  const conflict = normalizedName
-    ? existingProducts.find((p) => p.name_normalized === normalizedName && p.id !== excludeProductId)
+  const normalizedModel = values.model.trim().toLowerCase()
+  const exactDuplicate = normalizedName
+    ? matches.find((p) => p.name_normalized === normalizedName && (p.model ?? '').trim().toLowerCase() === normalizedModel)
     : undefined
 
-  const canSubmit = values.name.trim() !== '' && values.category !== '' && values.unit !== '' && values.priority !== ''
+  const canSubmit = values.name.trim() !== '' && values.category !== '' && values.unit !== ''
 
   return (
     <div className="flex flex-col gap-5">
       <label className="flex flex-col gap-1">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Product name</span>
         <Input type="text" value={values.name} onChange={(event) => update('name', event.target.value)} />
-        {conflict && (
+        {exactDuplicate && (
           <span className="text-sm text-yellow-700 dark:text-yellow-400">
-            A product named "{conflict.name}" already exists in this building.
+            "{exactDuplicate.name}"{exactDuplicate.model && ` (${exactDuplicate.model})`} already exists in the product
+            catalog
+            {exactDuplicate.already_linked
+              ? ' and is already available in your building — no need to add it again.'
+              : onLinkExisting
+                ? '. See the match below to link it to your building instead of creating a duplicate.'
+                : '.'}
           </span>
         )}
       </label>
@@ -67,6 +87,39 @@ export function ProductForm({
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Model (optional)</span>
         <Input type="text" value={values.model} onChange={(event) => update('model', event.target.value)} />
       </label>
+
+      {onLinkExisting && matches.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            Matching products already in the catalog
+          </span>
+          <div className="flex flex-col gap-2">
+            {matches.map((match) => (
+              <Card key={match.id} className="flex items-center justify-between gap-3 p-3">
+                <div className="flex flex-col text-left">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {match.name}
+                    {match.model && ` · ${match.model}`}
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {match.category} · {match.unit}
+                    {match.already_linked && ' · Already in your building'}
+                  </span>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  disabled={match.already_linked}
+                  loading={linkingProductId === match.id}
+                  onClick={() => onLinkExisting(match)}
+                >
+                  {match.already_linked ? 'Already linked' : 'Link to my building'}
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       <label className="flex flex-col gap-1">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Category</span>
@@ -95,22 +148,6 @@ export function ProductForm({
           ))}
         </Select>
       </label>
-
-      <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Priority</span>
-        <div className="grid grid-cols-3 gap-2">
-          {PRODUCT_PRIORITIES.map((priority) => (
-            <Button
-              key={priority}
-              variant={values.priority === priority ? 'primary' : 'secondary'}
-              size="md"
-              onClick={() => update('priority', priority)}
-            >
-              {priority}
-            </Button>
-          ))}
-        </div>
-      </div>
 
       <label className="flex flex-col gap-1">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Vendor name (optional)</span>

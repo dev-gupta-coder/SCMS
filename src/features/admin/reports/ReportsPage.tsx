@@ -3,7 +3,7 @@ import { Button, Card, Input, Select, toast } from '@/components/ui'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { useAllBuildingsFull } from '@/features/admin/buildings/api'
-import { useProductCatalog } from '@/features/admin/products/api'
+import { useAllLiveProducts } from '@/features/admin/products/api'
 import { computeDateRange } from '../dateRanges'
 import type { DateRangePreset } from '../dateRanges'
 import { useReportRows } from './api'
@@ -32,14 +32,15 @@ export function ReportsPage() {
   const dateRange = computeDateRange(preset, customFrom, customTo)
 
   const { data: buildings, isLoading: buildingsLoading } = useAllBuildingsFull()
-  const { data: allProducts, isLoading: productsLoading } = useProductCatalog()
+  // Global, not building-scoped (Global Products, CLAUDE.md) — a product
+  // can legitimately have entries across many buildings now, so there's
+  // no building to filter this list by. Category is still a real global
+  // product field, so that filter stays.
+  const { data: allProducts, isLoading: productsLoading } = useAllLiveProducts()
 
   const productOptions = useMemo(
-    () =>
-      (allProducts ?? []).filter(
-        (product) => (!buildingId || product.building.id === buildingId) && (!category || product.category === category),
-      ),
-    [allProducts, buildingId, category],
+    () => (allProducts ?? []).filter((product) => !category || product.category === category),
+    [allProducts, category],
   )
 
   const filters = useMemo(
@@ -63,7 +64,6 @@ export function ReportsPage() {
 
   const handleBuildingChange = (value: string) => {
     setBuildingId(value)
-    setProductId('')
   }
 
   const handleCategoryChange = (value: string) => {
@@ -149,7 +149,6 @@ export function ReportsPage() {
             {productOptions.map((product) => (
               <option key={product.id} value={product.id}>
                 {product.name}
-                {buildingId ? '' : ` (${product.building.name})`}
               </option>
             ))}
           </Select>

@@ -3,7 +3,7 @@ import { Input, Select } from '@/components/ui'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { useAllBuildingsFull, useAllFloors } from '@/features/admin/buildings/api'
 import { useCems } from '@/features/admin/cem/api'
-import { useProductCatalog } from '@/features/admin/products/api'
+import { useAllLiveProducts } from '@/features/admin/products/api'
 import { computeDateRange } from '../dateRanges'
 import type { DateRangePreset } from '../dateRanges'
 import type { LedgerEntryType } from '@/features/ledger/types'
@@ -44,15 +44,14 @@ export function LedgerHistoryPage() {
   const { data: buildings, isLoading: buildingsLoading } = useAllBuildingsFull()
   const { data: floors, isLoading: floorsLoading } = useAllFloors()
   const { data: cems, isLoading: cemsLoading } = useCems()
-  const { data: allProducts, isLoading: productsLoading } = useProductCatalog()
+  // Global, not building-scoped (Global Products, CLAUDE.md) — a product
+  // can legitimately have entries across many buildings now, so there's
+  // no building to filter this list by.
+  const { data: productOptions, isLoading: productsLoading } = useAllLiveProducts()
 
   const floorOptions = useMemo(
     () => (floors ?? []).filter((floor) => !buildingId || floor.building_id === buildingId),
     [floors, buildingId],
-  )
-  const productOptions = useMemo(
-    () => (allProducts ?? []).filter((product) => !buildingId || product.building.id === buildingId),
-    [allProducts, buildingId],
   )
 
   const filters = useMemo(
@@ -73,7 +72,6 @@ export function LedgerHistoryPage() {
   const handleBuildingChange = (value: string) => {
     setBuildingId(value)
     setFloorId('')
-    setProductId('')
   }
 
   const hasFilters = buildingId !== '' || floorId !== '' || productId !== '' || cemId !== ''
@@ -161,10 +159,9 @@ export function LedgerHistoryPage() {
 
           <Select value={productId} onChange={(event) => setProductId(event.target.value)}>
             <option value="">All Products</option>
-            {productOptions.map((product) => (
+            {(productOptions ?? []).map((product) => (
               <option key={product.id} value={product.id}>
                 {product.name}
-                {buildingId ? '' : ` (${product.building.name})`}
               </option>
             ))}
           </Select>
