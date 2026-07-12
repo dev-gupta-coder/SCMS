@@ -96,7 +96,7 @@ function NavDrawer({ open, onClose, navItems, drawerExtra, userName, roleBadge, 
       >
         <div className="flex items-center gap-2 border-b border-gray-100 px-4 py-4 dark:border-gray-800">
           <img src="/favicon.png" alt="Canvas Workspace" className="h-8 w-8 shrink-0" />
-          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Canvas Workspace</span>
+          <span className="text-sm font-semibold text-canvas-600 dark:text-gray-100">Canvas Workspace</span>
         </div>
 
         {(navItems.length > 0 || drawerExtra) && (
@@ -201,8 +201,8 @@ export function TopBar({
           >
             <HamburgerIcon className="h-6 w-6" />
           </button>
-          <img src="/favicon.png" alt="Canvas Workspace" className="h-8 w-8 shrink-0" />
-          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Canvas Workspace</span>
+          <img src="/logo.png" alt="Canvas Workspace" className="h-8 w shrink-0" />
+          {/* <span className="text-sm font-semibold text-canvas-600 dark:text-gray-100 " >Canvas Workspace </span> */}
 
           <div className="flex-1" />
           <ThemeToggle />
