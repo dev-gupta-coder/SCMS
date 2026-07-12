@@ -201,7 +201,7 @@ export function TopBar({
           >
             <HamburgerIcon className="h-6 w-6" />
           </button>
-          <img src="/logo.png" alt="Canvas Workspace" className="h-8 w shrink-0" />
+          <img src="/logo.png" alt="Canvas Workspace" className="h-7 shrink-0 border-violet-900" />
           {/* <span className="text-sm font-semibold text-canvas-600 dark:text-gray-100 " >Canvas Workspace </span> */}
 
           <div className="flex-1" />
